@@ -1,0 +1,17 @@
+.header {
+  padding: 16px;
+}
+
+.nav {
+  display: flex;
+}
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #2a2a2a;
+  transition: color 250ms linear, background-color 250ms linear;
+}
