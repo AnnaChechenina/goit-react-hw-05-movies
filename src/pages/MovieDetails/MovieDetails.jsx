@@ -1,19 +1,37 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useParams, useLocation, NavLink, Outlet } from 'react-router-dom';
-import { getDetailsMovie } from 'services/movieKeyAPI';
-import BackBtn from 'components/BackBtn';
+import API from 'services/movieDatabaseAPI';
+import picturePathPlace from 'helpers/placeholder';
+import genresList from 'helpers/genresList';
+import GoBackBtn from 'components/GoBackBtn';
 import css from './MovieDetails.module.css';
 
 const MovieDetails = () => {
   const { movieId } = useParams();
-  const [movieDetails, setMovieDetails] = useState({});
+  const [movieDetails, setMovieDetails] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
-    getDetailsMovie(movieId).then(responseMovieId => {
-      setMovieDetails(responseMovieId);
-    });
+    async function fetchMovieDetails() {
+      try {
+        const movieDetails = await API.getMovieDetails(Number(movieId));
+
+        if (!movieDetails) {
+          return;
+        }
+        setMovieDetails({ ...movieDetails });
+      } catch (error) {
+        console.log(error.message);
+      } finally {
+        // setIsLoading(false);
+      }
+    }
+    fetchMovieDetails();
   }, [movieId]);
+
+  if (!movieDetails) {
+    return null;
+  }
 
   const {
     poster_path,
@@ -23,16 +41,19 @@ const MovieDetails = () => {
     genres,
     release_date,
   } = movieDetails;
+
   const releaseYear = new Date(release_date).getFullYear();
   const userScore = Math.round(vote_average * 10);
+
   const backLinkHref = location.state?.from ?? '/';
+
   return (
     <section className={css.section}>
-      <BackBtn to={backLinkHref}>Go back</BackBtn>
+      <GoBackBtn to={backLinkHref}>Go back</GoBackBtn>
       <div className={css.movieDetails}>
         <img
           className={css.movieDetailsPoster}
-          src={poster_path}
+          src={picturePathPlace(poster_path)}
           alt={original_title}
         />
         <div className={css.movieDetailsDescription}>
@@ -43,7 +64,7 @@ const MovieDetails = () => {
           <h3>Overview</h3>
           <p>{overview}</p>
           <h3>Genres</h3>
-          <p>{genres}</p>
+          <p>{genresList(genres)}</p>
         </div>
       </div>
       <div className={css.movieDetailsInform}>

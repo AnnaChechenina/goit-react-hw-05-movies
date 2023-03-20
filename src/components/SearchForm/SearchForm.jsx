@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import css from './Search.module.css';
+import css from './SearchForm.module.css';
 
-const Search = ({ onSubmit, query }) => {
+const SearchForm = ({ onSubmit, query }) => {
   const [serchQuery, setSerchQuery] = useState(query);
 
   const handleChange = evt => {
@@ -23,9 +23,9 @@ const Search = ({ onSubmit, query }) => {
   };
 
   return (
-    <form className={css.search} onSubmit={handleSubmit}>
+    <form className={css.searchForm} onSubmit={handleSubmit}>
       <input
-        className={css.searchInput}
+        className={css.searchFormInput}
         type="text"
         value={serchQuery}
         onChange={handleChange}
@@ -39,9 +39,9 @@ const Search = ({ onSubmit, query }) => {
   );
 };
 
-Search.propTypes = {
+SearchForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   query: PropTypes.string.isRequired,
 };
 
-export default Search;
+export default SearchForm;

@@ -1,16 +1,35 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getReview } from 'services/movieKeyAPI';
+import API from 'services/movieDatabaseAPI';
 import css from './Reviews.module.css';
 
 const Reviews = () => {
   const { movieId } = useParams();
-  const [movieReview, setMovieReview] = useState([]);
+  const [movieReview, setmovieReview] = useState(null);
+
   useEffect(() => {
-    getReview(movieId).then(responseMovieReview => {
-      setMovieReview(responseMovieReview.results);
-    });
+    async function fetchMovieReview() {
+      try {
+        const movieReview = await API.getMovieReviews(Number(movieId));
+
+        if (!movieReview) {
+          return;
+        }
+        setmovieReview([...movieReview]);
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+    fetchMovieReview();
   }, [movieId]);
+
+  if (!movieReview) {
+    return null;
+  }
+
+  if (!movieReview.length) {
+    return <p>We don't have any reviews for this movies.</p>;
+  }
 
   return (
     <ul className={css.reviewsList}>

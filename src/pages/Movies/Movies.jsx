@@ -1,6 +1,6 @@
-import { getSearchMovie } from 'services/movieKeyAPI';
+import API from 'services/movieDatabaseAPI';
 import { useState, useEffect } from 'react';
-import Search from 'components/Search';
+import SearchForm from 'components/SearchForm';
 import MoviesList from 'components/MoviesList';
 import { useSearchParams } from 'react-router-dom';
 
@@ -9,18 +9,29 @@ const Movies = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get('query') ?? '';
   const [query, setQuery] = useState(searchQuery);
-  const movieName = searchParams.get('query') ?? '';
+
   useEffect(() => {
-    if (!movieName) {
+    if (query === '') {
       return;
     }
-    getSearchMovie(movieName)
-      .then(responseMovies => {
-        setMovies(responseMovies.results);
-      })
-      .catch(error => error.message)
-      .finally(() => {});
-  }, [movieName]);
+
+    async function getSearhMovie() {
+      try {
+        const trendingMovies = await API.searchMovies(query);
+
+        if (!trendingMovies.length) {
+          return;
+        }
+
+        setMovies([...trendingMovies]);
+      } catch (error) {
+        console.log(error.message);
+      } finally {
+        // setIsLoading(false);
+      }
+    }
+    getSearhMovie();
+  }, [query]);
 
   const handleFormSubmit = query => {
     setQuery(query);
@@ -29,7 +40,7 @@ const Movies = () => {
 
   return (
     <>
-      <Search query={query} onSubmit={handleFormSubmit} />
+      <SearchForm query={query} onSubmit={handleFormSubmit} />
       {movies.length > 0 && <MoviesList movies={movies} />}
     </>
   );

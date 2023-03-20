@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
-import css from './BackBtn.module.css';
+import css from './GoBackBtn.module.css'
 
-const BackBtn = ({ to, children }) => {
+const GoBackBtn = ({ to, children }) => {
   return (
     <button className={css.btn} type="button">
       <Link to={to}>{children}</Link>
@@ -9,4 +9,4 @@ const BackBtn = ({ to, children }) => {
   );
 };
 
-export default BackBtn;
+export default GoBackBtn;
